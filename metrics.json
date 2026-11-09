@@ -1,0 +1,195 @@
+{
+  "metrics": [
+    {
+      "id": "revenue",
+      "version": 2,
+      "formula": "Sum of revenue_amount over daily rows",
+      "aggregation": {
+        "field": "revenue_amount",
+        "op": "sum"
+      },
+      "grain": "daily",
+      "unit": "USD",
+      "owner": "finance-analytics",
+      "status": "certified",
+      "supported_dimensions": [
+        "channel",
+        "region"
+      ]
+    },
+    {
+      "id": "revenue",
+      "version": 1,
+      "formula": "Sum of revenue_legacy_amount over daily rows (old field)",
+      "aggregation": {
+        "field": "revenue_legacy_amount",
+        "op": "sum"
+      },
+      "grain": "daily",
+      "unit": "USD",
+      "owner": "finance-analytics",
+      "status": "superseded",
+      "supported_dimensions": [
+        "channel",
+        "region"
+      ],
+      "superseded_by": 2
+    },
+    {
+      "id": "orders",
+      "version": 1,
+      "formula": "Sum of orders_count over daily rows",
+      "aggregation": {
+        "field": "orders_count",
+        "op": "sum"
+      },
+      "grain": "daily",
+      "unit": "count",
+      "owner": "growth-analytics",
+      "status": "certified",
+      "supported_dimensions": [
+        "channel",
+        "region"
+      ]
+    },
+    {
+      "id": "conversion_rate",
+      "version": 1,
+      "formula": "orders_count divided by sessions_count",
+      "aggregation": {
+        "op": "ratio",
+        "numerator_field": "orders_count",
+        "denominator_field": "sessions_count"
+      },
+      "grain": "daily",
+      "unit": "ratio",
+      "owner": "growth-analytics",
+      "status": "certified",
+      "supported_dimensions": [
+        "channel",
+        "region"
+      ]
+    },
+    {
+      "id": "avg_order_value",
+      "version": 1,
+      "formula": "revenue_amount divided by orders_count",
+      "aggregation": {
+        "op": "ratio",
+        "numerator_field": "revenue_amount",
+        "denominator_field": "orders_count"
+      },
+      "grain": "daily",
+      "unit": "USD",
+      "owner": "finance-analytics",
+      "status": "certified",
+      "supported_dimensions": [
+        "channel",
+        "region"
+      ]
+    },
+    {
+      "id": "refund_rate",
+      "version": 1,
+      "formula": "refunds_count divided by orders_count",
+      "aggregation": {
+        "op": "ratio",
+        "numerator_field": "refunds_count",
+        "denominator_field": "orders_count"
+      },
+      "grain": "daily",
+      "unit": "ratio",
+      "owner": "finance-analytics",
+      "status": "certified",
+      "supported_dimensions": [
+        "channel",
+        "region"
+      ]
+    },
+    {
+      "id": "support_tickets",
+      "version": 1,
+      "formula": "Sum of support_tickets_count over daily rows",
+      "aggregation": {
+        "field": "support_tickets_count",
+        "op": "sum"
+      },
+      "grain": "daily",
+      "unit": "count",
+      "owner": "support-analytics",
+      "status": "certified",
+      "supported_dimensions": [
+        "channel",
+        "region"
+      ]
+    },
+    {
+      "id": "active_users",
+      "version": 1,
+      "formula": "Mean of active_users_count over daily rows",
+      "aggregation": {
+        "field": "active_users_count",
+        "op": "mean"
+      },
+      "grain": "daily",
+      "unit": "count",
+      "owner": "product-analytics",
+      "status": "certified",
+      "supported_dimensions": [
+        "region"
+      ]
+    },
+    {
+      "id": "gross_margin",
+      "version": 1,
+      "formula": "gross_profit_amount divided by revenue_amount",
+      "aggregation": {
+        "op": "ratio",
+        "numerator_field": "gross_profit_amount",
+        "denominator_field": "revenue_amount"
+      },
+      "grain": "daily",
+      "unit": "ratio",
+      "owner": "finance-analytics",
+      "status": "certified",
+      "supported_dimensions": [
+        "channel",
+        "region"
+      ]
+    },
+    {
+      "id": "churn_rate",
+      "version": 1,
+      "formula": "churned_users_count divided by active_users_count",
+      "aggregation": {
+        "op": "ratio",
+        "numerator_field": "churned_users_count",
+        "denominator_field": "active_users_count"
+      },
+      "grain": "daily",
+      "unit": "ratio",
+      "owner": "product-analytics",
+      "status": "draft",
+      "supported_dimensions": [
+        "region"
+      ]
+    },
+    {
+      "id": "legacy_daily_revenue",
+      "version": 1,
+      "formula": "Sum of revenue_legacy_amount over daily rows",
+      "aggregation": {
+        "field": "revenue_legacy_amount",
+        "op": "sum"
+      },
+      "grain": "daily",
+      "unit": "USD",
+      "owner": "finance-analytics",
+      "status": "deprecated",
+      "supported_dimensions": [
+        "channel",
+        "region"
+      ]
+    }
+  ]
+}
