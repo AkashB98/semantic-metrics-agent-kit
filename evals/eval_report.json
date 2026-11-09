@@ -1,0 +1,109 @@
+{
+  "cases": [
+    {
+      "expected_error": "UNKNOWN_METRIC",
+      "got_error": "UNKNOWN_METRIC",
+      "kind": "misuse",
+      "name": "unknown_metric",
+      "passed": true
+    },
+    {
+      "expected_error": "UNCERTIFIED_METRIC",
+      "got_error": "UNCERTIFIED_METRIC",
+      "kind": "misuse",
+      "name": "uncertified_metric",
+      "passed": true
+    },
+    {
+      "expected_error": "DEPRECATED_METRIC",
+      "got_error": "DEPRECATED_METRIC",
+      "kind": "misuse",
+      "name": "deprecated_metric",
+      "passed": true
+    },
+    {
+      "expected_error": "SUPERSEDED_VERSION",
+      "got_error": "SUPERSEDED_VERSION",
+      "kind": "misuse",
+      "name": "superseded_version",
+      "passed": true
+    },
+    {
+      "expected_error": "GRAIN_MISMATCH",
+      "got_error": "GRAIN_MISMATCH",
+      "kind": "misuse",
+      "name": "grain_mismatch",
+      "passed": true
+    },
+    {
+      "expected_error": "FILTER_ERROR",
+      "got_error": "FILTER_ERROR",
+      "kind": "misuse",
+      "name": "filter_error_unknown_dimension",
+      "passed": true
+    },
+    {
+      "expected_error": "FILTER_ERROR",
+      "got_error": "FILTER_ERROR",
+      "kind": "misuse",
+      "name": "filter_error_type_conflict",
+      "passed": true
+    },
+    {
+      "expected_error": "DIMENSION_MISMATCH",
+      "got_error": "DIMENSION_MISMATCH",
+      "kind": "misuse",
+      "name": "dimension_mismatch",
+      "passed": true
+    },
+    {
+      "expected_value": 2491860.95,
+      "got_value": 2491860.95,
+      "kind": "valid",
+      "name": "valid_revenue_all",
+      "passed": true
+    },
+    {
+      "expected_value": 2337641.97,
+      "got_value": 2337641.97,
+      "kind": "valid",
+      "name": "valid_revenue_channel",
+      "passed": true
+    },
+    {
+      "expected_value": 0.155357,
+      "got_value": 0.155357,
+      "kind": "valid",
+      "name": "valid_conversion_rate",
+      "passed": true
+    },
+    {
+      "expected_value": 80.770754,
+      "got_value": 80.770754,
+      "kind": "valid",
+      "name": "valid_avg_order_value",
+      "passed": true
+    },
+    {
+      "expected_value": 430.52963,
+      "got_value": 430.52963,
+      "kind": "valid",
+      "name": "valid_active_users",
+      "passed": true
+    },
+    {
+      "expected_value": 0.444626,
+      "got_value": 0.444626,
+      "kind": "valid",
+      "name": "valid_gross_margin",
+      "passed": true
+    }
+  ],
+  "correct_answer_rate": 1.0,
+  "misuse_total": 8,
+  "refusal_precision": 1.0,
+  "refusal_recall": 1.0,
+  "total_cases": 14,
+  "valid_correct": 6,
+  "valid_total": 6
+}
