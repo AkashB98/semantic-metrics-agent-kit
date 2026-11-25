@@ -97,13 +97,82 @@
       "kind": "valid",
       "name": "valid_gross_margin",
       "passed": true
+    },
+    {
+      "expected_status": "OK",
+      "expected_tile_value": 852616.51,
+      "got_status": "OK",
+      "got_tile_value": 852616.51,
+      "kind": "governance",
+      "name": "governance_exec-revenue-online-jan",
+      "passed": true
+    },
+    {
+      "expected_status": "DEFINITION_DRIFT",
+      "expected_tile_value": 6847703.24,
+      "got_status": "DEFINITION_DRIFT",
+      "got_tile_value": 6847703.24,
+      "kind": "governance",
+      "name": "governance_exec-revenue-all-legacy",
+      "passed": true
+    },
+    {
+      "expected_status": "STALE_VERSION",
+      "expected_tile_value": 6847703.24,
+      "got_status": "STALE_VERSION",
+      "got_tile_value": 6847703.24,
+      "kind": "governance",
+      "name": "governance_finance-revenue-v1-pin",
+      "passed": true
+    },
+    {
+      "expected_status": "VALUE_MISMATCH",
+      "expected_tile_value": 0.151709,
+      "got_status": "VALUE_MISMATCH",
+      "got_tile_value": 0.151709,
+      "kind": "governance",
+      "name": "governance_growth-conversion-feb",
+      "passed": true
+    },
+    {
+      "expected_status": "UNCERTIFIED_SOURCE",
+      "expected_tile_value": 0.024011,
+      "got_status": "UNCERTIFIED_SOURCE",
+      "got_tile_value": 0.024011,
+      "kind": "governance",
+      "name": "governance_product-churn-draft",
+      "passed": true
+    },
+    {
+      "expected_status": "UNKNOWN_METRIC",
+      "got_status": "UNKNOWN_METRIC",
+      "kind": "governance",
+      "name": "governance_unknown_version",
+      "passed": true
+    },
+    {
+      "expected_status": "ESCALATION",
+      "got_status": "ESCALATION",
+      "kind": "governance",
+      "name": "governance_high_stakes_waiver",
+      "passed": true
+    },
+    {
+      "expected_status": "REVIEW_APPROVES_FINDING",
+      "got_status": "REVIEW_APPROVES_FINDING",
+      "kind": "governance",
+      "name": "governance_approve_finding_refused",
+      "passed": true
     }
   ],
   "correct_answer_rate": 1.0,
+  "governance_accuracy": 1.0,
+  "governance_correct": 8,
+  "governance_total": 8,
   "misuse_total": 8,
   "refusal_precision": 1.0,
   "refusal_recall": 1.0,
-  "total_cases": 14,
+  "total_cases": 22,
   "valid_correct": 6,
   "valid_total": 6
 }
