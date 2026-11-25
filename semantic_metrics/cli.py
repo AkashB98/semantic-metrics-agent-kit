@@ -2,12 +2,14 @@ import argparse, json, sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from .registry import load_registry
 from .engine import query, QueryError
+from .governance import audit as run_audit, GovernanceError
 def main(argv=None):
     p=argparse.ArgumentParser(prog="semantic-metrics")
     sub=p.add_subparsers(dest="cmd", required=True)
     sub.add_parser("list")
     a=sub.add_parser("ask"); a.add_argument("--request", default=None)
     sub.add_parser("check")
+    sub.add_parser("audit")
     sub.add_parser("demo")
     s=sub.add_parser("serve"); s.add_argument("--port", type=int, default=8765); s.add_argument("--host", default="127.0.0.1")
     args=p.parse_args(argv)
@@ -27,6 +29,12 @@ def main(argv=None):
         certified=[m for m in metrics if m["status"]=="certified"]
         ok=len(certified)==8 and all("aggregation" in m and "supported_dimensions" in m for m in metrics)
         print("ok" if ok else "failed"); return 0 if ok else 1
+    if args.cmd=="audit":
+        try: report=run_audit()
+        except GovernanceError as e: print(f"audit failed: {e.code}: {e.message}"); return 2
+        except Exception as e: print(f"audit failed: {e}"); return 2
+        print(json.dumps(report, indent=2, sort_keys=True))
+        return 0 if report["summary"]["ok"]==report["summary"]["total"] else 1
     if args.cmd=="demo":
         examples=[{"metric":"revenue","grain":"daily","filters":{"channel":"online"},"window":{"start":"2026-01-01","end":"2026-01-31"}},{"metric":"conversion_rate","grain":"daily","filters":{},"window":{}},{"metric":"churn_rate","grain":"daily","filters":{}}]
         for req in examples:
