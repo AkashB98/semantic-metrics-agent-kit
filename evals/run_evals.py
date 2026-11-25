@@ -3,6 +3,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 from semantic_metrics.engine import query, QueryError
 from semantic_metrics.data import generate_rows
 from semantic_metrics.registry import load_registry
+from semantic_metrics.governance import GovernanceError, audit, load_tiles, record_review, review_summary
 
 def recompute(req, metrics, rows):
     m=[x for x in metrics if x["id"]==req["metric"] and x["status"]=="certified"][0]
@@ -20,6 +21,56 @@ def recompute(req, metrics, rows):
     elif agg["op"]=="ratio": 
         den=sum(r[agg["denominator_field"]] for r in filt); v=sum(r[agg["numerator_field"]] for r in filt)/den if den else 0.0
     return round(float(v),6), len(filt)
+
+def recompute_spec(spec, filters, window, rows):
+    """Independent recompute of an arbitrary aggregation spec over raw rows —
+    used for tile values, deliberately not via the governance module."""
+    filt=[]
+    for r in rows:
+        if window.get("start") and r["date"]<window["start"]: continue
+        if window.get("end") and r["date"]>window["end"]: continue
+        if all(r.get(k)==v for k,v in filters.items()): filt.append(r)
+    if spec["op"]=="sum": v=sum(r[spec["field"]] for r in filt)
+    elif spec["op"]=="mean": v=sum(r[spec["field"]] for r in filt)/len(filt) if filt else 0.0
+    elif spec["op"]=="ratio":
+        den=sum(r[spec["denominator_field"]] for r in filt); v=sum(r[spec["numerator_field"]] for r in filt)/den if den else 0.0
+    return round(float(v),6)
+
+def governance_cases(metrics, rows):
+    tiles={t["id"]:t for t in load_tiles()}
+    report=audit(tiles=list(tiles.values()), metrics=metrics, rows=rows)
+    traces={t["tile_id"]:t for t in report["tiles"]}
+    expected={"exec-revenue-online-jan":"OK","exec-revenue-all-legacy":"DEFINITION_DRIFT",
+              "finance-revenue-v1-pin":"STALE_VERSION","growth-conversion-feb":"VALUE_MISMATCH",
+              "product-churn-draft":"UNCERTIFIED_SOURCE"}
+    cases=[]
+    for tid, want in expected.items():
+        t=tiles[tid]
+        own=recompute_spec(t["aggregation"], t["filters"], t["window"], rows)
+        got=traces[tid]
+        passed=(got["status"]==want and abs(got["tile_value"]-own)<1e-9
+                and (want=="OK")==(got["findings"]==[]))
+        cases.append({"name":f"governance_{tid}","kind":"governance","expected_status":want,
+                      "got_status":got["status"],"expected_tile_value":own,
+                      "got_tile_value":got["tile_value"],"passed":passed})
+    # variant 1: a tile pinning a version that does not exist
+    ghost=dict(tiles["exec-revenue-online-jan"]); ghost["id"]="ghost-v3"; ghost["version"]=3
+    rep2=audit(tiles=[ghost], metrics=metrics, rows=rows)
+    cases.append({"name":"governance_unknown_version","kind":"governance","expected_status":"UNKNOWN_METRIC",
+                  "got_status":rep2["tiles"][0]["status"],"passed":rep2["tiles"][0]["status"]=="UNKNOWN_METRIC"})
+    # variant 2: waiving the high-stakes drift tile must surface as an escalation
+    entries=record_review([], report, "exec-revenue-all-legacy", "eval-reviewer", "waived")
+    s=review_summary(entries, report)
+    cases.append({"name":"governance_high_stakes_waiver","kind":"governance","expected_status":"ESCALATION",
+                  "got_status":"ESCALATION" if s["requires_escalation"]==["exec-revenue-all-legacy"] else s["requires_escalation"],
+                  "passed":s["requires_escalation"]==["exec-revenue-all-legacy"]})
+    # variant 3: approving a tile with a finding must be refused
+    try:
+        record_review([], report, "growth-conversion-feb", "eval-reviewer", "approved"); refused=False
+    except GovernanceError as e: refused=(e.code=="REVIEW_APPROVES_FINDING")
+    cases.append({"name":"governance_approve_finding_refused","kind":"governance","expected_status":"REVIEW_APPROVES_FINDING",
+                  "got_status":"REVIEW_APPROVES_FINDING" if refused else "NOT_REFUSED","passed":refused})
+    return cases
 
 def main():
     metrics=load_registry(); rows=generate_rows()
@@ -64,9 +115,13 @@ def main():
     precision=round(tp/refusals_made,6) if refusals_made else 0.0
     recall=round(tp/len(misuse),6) if misuse else 0.0
     valid_rate=round(valid_correct/len(valid),6) if valid else 0.0
-    report={"cases":cases,"correct_answer_rate":valid_rate,"misuse_total":len(misuse),"refusal_precision":precision,"refusal_recall":recall,"total_cases":len(cases),"valid_correct":valid_correct,"valid_total":len(valid)}
+    gov=governance_cases(metrics, rows)
+    gov_correct=sum(1 for c in gov if c["passed"])
+    gov_accuracy=round(gov_correct/len(gov),6) if gov else 0.0
+    cases.extend(gov)
+    report={"cases":cases,"correct_answer_rate":valid_rate,"governance_accuracy":gov_accuracy,"governance_correct":gov_correct,"governance_total":len(gov),"misuse_total":len(misuse),"refusal_precision":precision,"refusal_recall":recall,"total_cases":len(cases),"valid_correct":valid_correct,"valid_total":len(valid)}
     out=pathlib.Path(__file__).resolve().parent/"eval_report.json"
     out.write_text(json.dumps(report, indent=2, sort_keys=True)+"\n")
     print(json.dumps(report, indent=2, sort_keys=True))
-    return 0 if (precision==1.0 and recall==1.0 and valid_rate==1.0) else 1
+    return 0 if (precision==1.0 and recall==1.0 and valid_rate==1.0 and gov_accuracy==1.0) else 1
 if __name__=="__main__": raise SystemExit(main())
