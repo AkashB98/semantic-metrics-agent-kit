@@ -12,6 +12,12 @@ def main():
     r=run_cli("ask","--request",json.dumps({"metric":"churn_rate","grain":"daily","filters":{}})); assert r.returncode==1; assert "UNCERTIFIED_METRIC" in r.stdout; print("ask refusal ok")
     # check
     r=run_cli("check"); assert r.returncode==0, r.stdout; print("check ok")
+    # governance audit: exit 1 by design (planted findings), drift tile flagged, clean tile OK
+    r=run_cli("audit"); assert r.returncode==1, r.returncode; report=json.loads(r.stdout)
+    by_id={t["tile_id"]:t for t in report["tiles"]}
+    assert by_id["exec-revenue-online-jan"]["status"]=="OK"; assert by_id["exec-revenue-all-legacy"]["status"]=="DEFINITION_DRIFT"
+    assert by_id["finance-revenue-v1-pin"]["status"]=="STALE_VERSION"; assert by_id["growth-conversion-feb"]["status"]=="VALUE_MISMATCH"
+    assert by_id["product-churn-draft"]["status"]=="UNCERTIFIED_SOURCE"; print("audit ok: 1 clean tile traced, 4 planted findings flagged")
     # demo command
     r=run_cli("demo"); assert r.returncode==0; print("cli demo ok")
     # serve round-trip
