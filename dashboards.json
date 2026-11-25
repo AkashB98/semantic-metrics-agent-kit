@@ -1,0 +1,101 @@
+{
+  "tiles": [
+    {
+      "aggregation": {
+        "field": "revenue_amount",
+        "op": "sum"
+      },
+      "dashboard": "Exec Overview",
+      "filters": {
+        "channel": "online"
+      },
+      "grain": "daily",
+      "id": "exec-revenue-online-jan",
+      "metric": "revenue",
+      "reported_value": 852616.51,
+      "stakes": "high",
+      "title": "Revenue \u2014 Online, January",
+      "unit": "USD",
+      "version": 2,
+      "window": {
+        "end": "2026-01-31",
+        "start": "2026-01-01"
+      }
+    },
+    {
+      "aggregation": {
+        "field": "revenue_legacy_amount",
+        "op": "sum"
+      },
+      "dashboard": "Exec Overview",
+      "filters": {},
+      "grain": "daily",
+      "id": "exec-revenue-all-legacy",
+      "metric": "revenue",
+      "reported_value": 6847703.24,
+      "stakes": "high",
+      "title": "Revenue \u2014 All Channels",
+      "unit": "USD",
+      "version": 2,
+      "window": {}
+    },
+    {
+      "aggregation": {
+        "field": "revenue_legacy_amount",
+        "op": "sum"
+      },
+      "dashboard": "Finance Detail",
+      "filters": {},
+      "grain": "daily",
+      "id": "finance-revenue-v1-pin",
+      "metric": "revenue",
+      "reported_value": 6847703.24,
+      "stakes": "medium",
+      "title": "Revenue \u2014 Legacy Board Pack",
+      "unit": "USD",
+      "version": 1,
+      "window": {}
+    },
+    {
+      "aggregation": {
+        "denominator_field": "sessions_count",
+        "numerator_field": "orders_count",
+        "op": "ratio"
+      },
+      "dashboard": "Growth Weekly",
+      "filters": {},
+      "grain": "daily",
+      "id": "growth-conversion-feb",
+      "metric": "conversion_rate",
+      "reported_value": 0.1745,
+      "stakes": "medium",
+      "title": "Conversion Rate \u2014 February",
+      "unit": "ratio",
+      "version": 1,
+      "window": {
+        "end": "2026-02-28",
+        "start": "2026-02-01"
+      }
+    },
+    {
+      "aggregation": {
+        "denominator_field": "active_users_count",
+        "numerator_field": "churned_users_count",
+        "op": "ratio"
+      },
+      "dashboard": "Product Experiments",
+      "filters": {
+        "region": "north"
+      },
+      "grain": "daily",
+      "id": "product-churn-draft",
+      "metric": "churn_rate",
+      "reported_value": 0.024011,
+      "stakes": "low",
+      "title": "Churn Rate \u2014 North (draft metric)",
+      "unit": "ratio",
+      "version": 1,
+      "window": {}
+    }
+  ]
+}
